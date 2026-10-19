@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Local data and exports
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+*.csv
+*.parquet
+*.xlsx
+*.xls
+*.db
+
+# Exception: the synthetic fixtures in data/sample/ MUST be versioned.
+# Without this negation, the *.csv rule above would hide them from git and the
+# demo would not be reproducible from a clean clone.
+!data/sample/**/*.csv
+!data/sample/**/*.parquet
+
+# Power BI local/backup files (review before committing)
+*.pbix~
+*.pbit~
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

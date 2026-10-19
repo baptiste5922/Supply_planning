@@ -1,0 +1,17 @@
+# Minimal dependencies — Phase 0 and early Phase 1.
+# Project rule: only add a dependency when a roadmap task actually needs it,
+# and document what it is for.
+
+# Tabular manipulation (ingestion, transformations, planning calculations).
+pandas==2.3.3
+
+# PostgreSQL access: SQLAlchemy for connections and parameterised SQL,
+# psycopg as the driver. The [binary] extra avoids compiling libpq locally.
+SQLAlchemy==2.0.44
+psycopg[binary]==3.2.12
+
+# Load configuration from .env (never hard-code secrets).
+python-dotenv==1.1.1
+
+# Automated tests.
+pytest==9.0.1
