@@ -9,7 +9,12 @@ from __future__ import annotations
 import pytest
 
 from supply_planning import __version__
-from supply_planning.config import DatabaseSettings, load_database_settings
+from supply_planning.config import (
+    DEFAULT_POSTGRES_PORT,
+    DatabaseSettings,
+    load_database_settings,
+    parse_port,
+)
 
 
 def test_package_importable() -> None:
@@ -65,3 +70,78 @@ def test_missing_configuration_raises_instead_of_defaulting(
         load_database_settings(dotenv_path=str(tmp_path / "absent.env"))
 
     assert "PGHOST" in str(excinfo.value)
+
+
+def test_port_defaults_to_5432_when_pgport_is_absent(
+    monkeypatch: pytest.MonkeyPatch, tmp_path
+) -> None:
+    """PGPORT is optional; load_database_settings falls back to 5432.
+
+    Note what this test does NOT prove: the buggy
+    `int(os.environ.get("PGPORT", "5432"))` also returns 5432 when the variable is
+    absent, so this test stays green under both implementations. The regression is
+    caught by the empty-value test below.
+    """
+    # The four required variables must be satisfied first, otherwise the function
+    # raises KeyError before it ever reaches the port logic.
+    monkeypatch.setenv("PGHOST", "localhost")
+    monkeypatch.setenv("PGDATABASE", "supply_planning_lab")
+    monkeypatch.setenv("PGUSER", "app")
+    monkeypatch.setenv("PGPASSWORD", "s3cret")
+    monkeypatch.delenv("PGPORT", raising=False)
+
+    settings = load_database_settings(dotenv_path=str(tmp_path / "absent.env"))
+
+    assert settings.port == DEFAULT_POSTGRES_PORT
+
+
+def test_parse_port_uses_the_default_when_the_variable_is_absent() -> None:
+    """An absent PGPORT means "no opinion", which is a legitimate default."""
+    assert parse_port(None) == DEFAULT_POSTGRES_PORT
+
+
+def test_parse_port_accepts_an_explicit_value() -> None:
+    assert parse_port("5433") == 5433
+
+
+@pytest.mark.parametrize("raw", ["", "   "])
+def test_parse_port_rejects_an_empty_value(raw: str) -> None:
+    """An empty PGPORT is a half-finished configuration, not an absent one.
+
+    `os.environ.get("PGPORT", "5432")` would return "" here and never apply the
+    default, then crash on int("") with an unreadable message.
+    """
+    with pytest.raises(ValueError, match="empty"):
+        parse_port(raw)
+
+
+@pytest.mark.parametrize("raw", ["abc", "54 33", "5432.0"])
+def test_parse_port_rejects_a_non_integer_value(raw: str) -> None:
+    with pytest.raises(ValueError, match="must be an integer"):
+        parse_port(raw)
+
+
+@pytest.mark.parametrize("raw", ["0", "-1", "70000"])
+def test_parse_port_rejects_a_value_outside_the_valid_range(raw: str) -> None:
+    with pytest.raises(ValueError, match="between 1 and 65535"):
+        parse_port(raw)
+
+
+def test_empty_pgport_is_rejected_by_load_database_settings(
+    monkeypatch: pytest.MonkeyPatch, tmp_path
+) -> None:
+    """Wiring test: an empty PGPORT must reach parse_port and be rejected.
+
+    This is the test that actually guards the fix. Reintroducing
+    `int(os.environ.get("PGPORT", "5432"))` makes it fail with ValueError:
+    invalid literal for int() with base 10: \'\' instead of the explicit message,
+    whereas every parse_port unit test would stay green.
+    """
+    monkeypatch.setenv("PGHOST", "localhost")
+    monkeypatch.setenv("PGDATABASE", "supply_planning_lab")
+    monkeypatch.setenv("PGUSER", "app")
+    monkeypatch.setenv("PGPASSWORD", "s3cret")
+    monkeypatch.setenv("PGPORT", "")
+
+    with pytest.raises(ValueError, match="PGPORT is set but empty"):
+        load_database_settings(dotenv_path=str(tmp_path / "absent.env"))

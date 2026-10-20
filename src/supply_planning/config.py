@@ -12,6 +12,8 @@ from dataclasses import dataclass
 
 from dotenv import load_dotenv
 
+DEFAULT_POSTGRES_PORT = 5432
+
 
 @dataclass(frozen=True)
 class DatabaseSettings:
@@ -36,12 +38,51 @@ class DatabaseSettings:
         )
 
 
+def parse_port(raw: str | None) -> int:
+    """Turn the raw PGPORT value into a port number.
+
+    Three cases are deliberately distinguished:
+
+    - the variable is **absent** (`None`): the user has no opinion, so we apply
+      `DEFAULT_POSTGRES_PORT`;
+    - the variable is **present but empty**: the user started configuring and stopped,
+      which is a broken state, so we raise instead of silently guessing;
+    - the variable is **present and invalid**: we raise with the offending value.
+
+    `os.environ.get()` collapses the first two cases by returning `""`, which is why
+    the caller must pass the raw result of `os.environ.get("PGPORT")` without a default.
+    """
+    if raw is None:
+        return DEFAULT_POSTGRES_PORT
+
+    stripped = raw.strip()
+    if not stripped:
+        raise ValueError(
+            "PGPORT is set but empty. Remove the line from .env to use the default "
+            f"({DEFAULT_POSTGRES_PORT}), or give it an explicit value."
+        )
+
+    try:
+        port = int(stripped)
+    except ValueError as exc:
+        raise ValueError(f"PGPORT must be an integer, got {raw!r}.") from exc
+
+    if not 1 <= port <= 65535:
+        raise ValueError(f"PGPORT must be between 1 and 65535, got {port}.")
+
+    return port
+
+
 def load_database_settings(*, dotenv_path: str | None = None) -> DatabaseSettings:
     """Read the PG* variables from the environment.
 
     Raises `KeyError` when a required variable is missing, instead of falling back to
     a silent default: a connection silently pointing at the wrong database is more
     dangerous than an explicit error.
+
+    Raises `ValueError` when `PGPORT` is present but unusable. Two exception types are
+    used on purpose: absence and invalidity are different problems for the caller, and
+    the message must say which one occurred.
     """
     load_dotenv(dotenv_path=dotenv_path, override=False)
 
@@ -56,7 +97,7 @@ def load_database_settings(*, dotenv_path: str | None = None) -> DatabaseSetting
 
     return DatabaseSettings(
         host=os.environ["PGHOST"],
-        port=int(os.environ.get("PGPORT", "5432")),
+        port=parse_port(os.environ.get("PGPORT")),
         database=os.environ["PGDATABASE"],
         user=os.environ["PGUSER"],
         password=os.environ["PGPASSWORD"],
