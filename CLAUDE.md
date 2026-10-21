@@ -62,6 +62,29 @@ After a task:
 - Suggest a concise entry for `docs/SESSION_LOG.md`; do not claim that a test passed unless it was actually run.
 - Update roadmap status only when acceptance criteria are met.
 
+## Git workflow
+
+Work happens on a branch, never directly on `main`. `main` must stay in a state where the
+documented demo runs and the tests pass, because that is the branch a recruiter will clone.
+
+- **One branch per roadmap task.** Name it `<task-id>-<short-slug>` in lower case, for example
+  `p1.1-data-dictionary` or `p1.4-ingestion-quality-checks`. Create it before the first edit:
+  `git switch -c p1.1-data-dictionary`.
+- **If an edit starts while `main` is checked out**, create the branch before committing. Do not
+  commit to `main` and fix it afterwards.
+- **Commit only when the user asks.** This rule is unchanged; the branch is created early, the
+  commits are not.
+- **Commit message:** first line `P1.1 — short imperative summary` (the roadmap task ID, an em
+  dash, then what the commit does). Body explains the why and lists actual check results. Never
+  claim a test passed unless it was run.
+- **Merge back with `git merge --no-ff`** once the acceptance criteria are met and the session log
+  is written, so each roadmap task appears as one identifiable merge commit in the history. Delete
+  the branch after merging.
+- **Do not merge a task that is not DONE.** A half-finished task stays on its branch across
+  sessions; `docs/SESSION_LOG.md` records which branch it lives on.
+- **Never force-push, never rewrite published history**, and never commit `.env`, credentials or
+  raw private data.
+
 ## Architecture principles
 
 - Python for ingestion, transformations, analytics and forecasting.
