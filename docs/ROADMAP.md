@@ -21,7 +21,7 @@ Status values: `TODO`, `IN_PROGRESS`, `BLOCKED`, `DONE`. Do not mark a task DONE
   - A minimal smoke test runs.
 
 ### P0.3 — Learn the data flow
-- Status: TODO
+- Status: DONE (2026-10-20)
 - Deliverable: `docs/ARCHITECTURE.md`
 - Acceptance criteria:
   - Diagram shows source → Python → PostgreSQL → Power BI.

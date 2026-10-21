@@ -55,3 +55,38 @@ Append one entry after each meaningful working session. Keep entries concise and
 - **Next task:** P0.3 — document the data flow in `docs/ARCHITECTURE.md`.
 - **Question I can now answer without AI:** why plan at SKU x week rather than SKU x day, and
   what the projected inventory balance equation computes.
+
+### 2026-10-20 — P0.3 Learn the data flow
+- **Goal:** document, before any schema or code, where each number comes from and which system
+  owns it.
+- **Implemented:**
+  - `docs/ARCHITECTURE.md` rewritten from the generic scaffold into an Alpiflow-specific
+    document: Phase 1-2 flow diagram (CSV/generator -> Python extract/validate/transform ->
+    PostgreSQL `raw`/`clean`/`analytics` -> Power BI), a separate Phase 3 diagram showing the
+    Odoo test instance as an **optional, read-only** operational source, a component
+    responsibility table with an explicit "does not do" column, the three-schema layering with
+    naming conventions, a **source-of-truth table per data domain** for Phases 1-2 and 3,
+    execution/reproducibility conventions, repository layout, and an out-of-scope list.
+  - `docs/BUSINESS_RULES.md`: open question "Source of truth per field" closed for Phases 1-2
+    and marked "proposed" for Phase 3; header annotated with the amendment.
+  - `docs/ROADMAP.md`: P0.3 marked DONE.
+- **Concepts learned:** why a one-way data flow is what makes a result reproducible; why `raw`
+  must be kept even though it is messy (it separates "wrong at source" from "broken by my code");
+  the difference in purpose between `clean` (is this row trustworthy) and `analytics` (is this row
+  shaped for a question); the rule "one field, one producer" as the way conflicts are resolved;
+  why a labelled assumption is a legitimate source of truth while a hidden default is not.
+- **Checks run and actual results:**
+  - `python -m pytest` -> `17 passed` (documentation-only change, run to confirm no regression).
+  - Acceptance criteria re-read against the file: the three criteria of P0.3 are each covered by
+    §1.1, §1.2 and §2 + §4 respectively.
+  - No database or Odoo connection was attempted; PostgreSQL is still unused.
+- **Known limitations / decisions:** the Phase 3 source-of-truth column is a proposal, not a
+  verified decision — it assumes Odoo demo data is credible enough to replace the synthetic
+  catalogue, stock and purchase orders, which can only be confirmed in P3.5. The table names
+  listed for the `analytics` schema are an intention, not a committed schema; P1.2 may rename or
+  drop some. No orchestrator, no container, no write-back to Odoo in v1, by explicit decision.
+- **Next task:** P1.1 — define the data grain, data dictionary and field-level rules
+  (`docs/DATA_DICTIONARY.md`), which must settle the remaining open questions that block P1.3
+  (stockout censoring, returns, end-of-life SKUs).
+- **Question I can now answer without AI:** which system owns the on-hand stock figure, which
+  system owns the projected shortage, and what to conclude when the two disagree.

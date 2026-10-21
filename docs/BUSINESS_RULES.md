@@ -5,7 +5,8 @@
 > Salomon, Amer Sports or any other real company. Every invented value carries an `[ASM-xx]`
 > identifier and is listed in the assumptions register at the end of this document.
 
-- **Status:** v1 — P0.1
+- **Status:** v1 — P0.1 (amended 2026-10-20 by P0.3: the "source of truth per field" open
+  question is now answered in `docs/ARCHITECTURE.md` §4)
 - **Date:** 2026-10-19
 - **Structural decisions agreed:** grain SKU × week, 13-week horizon, single warehouse, unit = piece.
 
@@ -223,7 +224,10 @@ To be decided before the related implementation. **Do not silently invent an ans
       This changes the definition of a shortage for the `FOOT` family. *(affects P1.5)*
 - [ ] **Collection end-of-life.** How do we represent a SKU replaced by next season's model?
       Should an inactive SKU disappear from the coverage calculation? *(affects P1.2 and P2.1)*
-- [ ] **Source of truth per field.** From Phase 3, Odoo becomes a possible source for stock and
-      orders. Which field wins in case of divergence? *(affects P3.5)*
+- [x] **Source of truth per field.** *Decided for Phases 1-2 in `docs/ARCHITECTURE.md` §4:*
+      operational facts flow one way ERP -> analytics, Odoo wins on catalogue, stock and purchase
+      orders, configuration owns the planning parameters, and this project owns only what it
+      derives. The Phase 3 column remains **proposed** and must be re-confirmed in P3.5 once the
+      shape of the Odoo test data is known. *(affects P3.5)*
 - [ ] **Promotions.** Are promotion-driven demand peaks flagged with a `promotion_flag` usable by
       the forecasting model? *(affects P2.3)*
