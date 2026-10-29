@@ -31,7 +31,7 @@ Status values: `TODO`, `IN_PROGRESS`, `BLOCKED`, `DONE`. Do not mark a task DONE
 ## Phase 1 — Supply Planning Control Tower (35–50 hours)
 
 ### P1.1 — Define data grain, dictionary and KPI rules
-- Status: TODO
+- Status: DONE (2026-10-21)
 - Deliverables: `docs/DATA_DICTIONARY.md`, `docs/BUSINESS_RULES.md`
 - Acceptance criteria:
   - Product, date/week, sales, inventory, purchase/supply and capacity fields are defined.
