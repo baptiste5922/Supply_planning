@@ -6,7 +6,9 @@
 > identifier and is listed in the assumptions register at the end of this document.
 
 - **Status:** v1 — P0.1 (amended 2026-10-20 by P0.3: the "source of truth per field" open
-  question is now answered in `docs/ARCHITECTURE.md` §4)
+  question is now answered in `docs/ARCHITECTURE.md` §4; amended 2026-10-21 by P1.1: the
+  "e-commerce returns" open question is closed, and `ASM-11` is added to resolve a gap found
+  while writing `docs/DATA_DICTIONARY.md`)
 - **Date:** 2026-10-19
 - **Structural decisions agreed:** grain SKU × week, 13-week horizon, single warehouse, unit = piece.
 
@@ -162,6 +164,9 @@ PI_{s,t} = PI_{s,t-1} + R_{s,t} - D_{s,t}      for t = 1..13
 - **Unit:** percentage; load and capacity both in **pieces processed per week**
 - **Grain:** product family × week (not SKU: capacity is a shared resource)
 - **Capacity unit:** pieces picked/shipped per week by warehouse `WH-01` `[ASM-05]`
+- **Per-family capacity:** `ASM-05` only states a **total** of 9,000 pieces/week for the whole
+  site. Because this KPI's grain is family × week, the total must be split by family — that split
+  is `ASM-11` (see §5). `available_capacity_{f,t} = total_capacity_t × family_share_f`.
 - **Overload handling:** the ratio is **not capped at 100%**. A value of 130% means the plan is
   infeasible, and that is exactly the information to surface. The system does not smooth or
   automatically defer the load.
@@ -169,6 +174,10 @@ PI_{s,t} = PI_{s,t-1} + R_{s,t} - D_{s,t}      for t = 1..13
   - Capacity modelled as a simple weekly volume — no skills, shifts or overtime.
   - No distinction between inbound receiving and outbound shipping.
   - Distribution of the load within the week is ignored.
+  - The family split (`ASM-11`) is a fixed percentage, not a measured capability — in reality a
+    warehouse can shift pickers between families within a week, which would smooth out an
+    apparent single-family overload. The KPI will over-report family-level infeasibility
+    compared with the site's true flexibility.
 
 ### 4.4 Supplier delivery performance
 
@@ -208,6 +217,7 @@ hard-coded into business logic.
 | `ASM-08` | Service level target | 95% on `FOOT` and `APPAREL`, 98% on `NUTRI` | Nutrition is cheap to stock and highly substitutable: a stockout is costly in brand terms |
 | `ASM-09` | Seasonality | `FOOT`/`APPAREL` peak March–June and September–October; `NUTRI` follows the race season | Real European trail-race calendar |
 | `ASM-10` | Data period covered | 2024-W01 → current week (2026-10-19) | ~3 annual cycles, the minimum to estimate seasonality |
+| `ASM-11` | Capacity split by family | `FOOT` 35% / `APPAREL` 25% / `NUTRI` 25% / `PACK` 15% of the 9,000 pcs/week total (`ASM-05`) | `FOOT` and `APPAREL` carry the most SKUs and revenue; `NUTRI` has high unit turnover despite a low unit price, so it earns a larger share than its revenue alone would suggest; `PACK` has the slowest velocity and the smallest share. Configurable, must sum to 100%. |
 
 ---
 
@@ -218,8 +228,11 @@ To be decided before the related implementation. **Do not silently invent an ans
 - [ ] **Stockout-censored sales.** When a SKU is out of stock, recorded sales are 0 even though
       real demand was positive. Should the data generator produce a `was_stocked_out` column to
       make censoring visible in Phase 2? *(affects P1.3 and P2.1)*
-- [ ] **E-commerce returns.** The `D2C` channel has a non-trivial return rate on `FOOT` (sizing
-      issues). Do we model them in v1, or ignore them and document that? *(affects P1.1)*
+- [x] **E-commerce returns.** *Decided in P1.1:* returns are **ignored in v1**. `units_sold` in
+      `analytics.fct_demand_actual` is gross, not corrected for later `D2C` returns. This is a
+      known limitation (see `docs/DATA_DICTIONARY.md`, demand actual table): true consumer demand
+      on `FOOT` is slightly overstated by the sizing-return rate. Revisit only if Phase 2 EDA shows
+      the distortion materially affects the forecast.
 - [ ] **Size substitution.** If size 42 is out of stock, does the customer take 43 or walk away?
       This changes the definition of a shortage for the `FOOT` family. *(affects P1.5)*
 - [ ] **Collection end-of-life.** How do we represent a SKU replaced by next season's model?

@@ -90,3 +90,39 @@ Append one entry after each meaningful working session. Keep entries concise and
   (stockout censoring, returns, end-of-life SKUs).
 - **Question I can now answer without AI:** which system owns the on-hand stock figure, which
   system owns the projected shortage, and what to conclude when the two disagree.
+
+### 2026-10-21 — P1.1 Data grain, dictionary and KPI rules
+- **Goal:** turn the generic `docs/DATA_DICTIONARY.md` draft into a field-level, typed, keyed
+  dictionary that P1.2 can translate directly into `CREATE TABLE` statements, and close the
+  remaining open question that explicitly blocked this task.
+- **Implemented:**
+  - `docs/DATA_DICTIONARY.md` rewritten: seven tables (`dim_product`, `dim_calendar`,
+    `dim_supplier`, `fct_demand_actual`, `fct_inventory_snapshot`, `fct_purchase_order_line`,
+    `fct_capacity`), each with grain stated in one sentence, PK/FK, types, units, and an explicit
+    missing-data rule. `fct_demand_forecast` and `fct_planning_exception` deliberately left
+    undefined — they are Phase 2 / P1.5 outputs, not source tables, and defining them now would
+    mean guessing their shape.
+  - `docs/BUSINESS_RULES.md`: closed the "e-commerce returns" open question (ignored in v1,
+    documented as a limitation on `fct_demand_actual`); added `ASM-11` (capacity split by family)
+    to resolve a gap found while writing the capacity table — `ASM-05` only gave one warehouse-wide
+    total, but the KPI in §4.3 is defined at family grain.
+  - `docs/ROADMAP.md`: P1.1 marked DONE.
+- **Concepts learned:** grain can legitimately differ between the `clean` and `analytics` layers
+  (channel-level vs SKU-week aggregated) as long as it is documented; `NULL` vs `0` vs an absent
+  row are three distinct, meaningful states (`received_qty`, missing SKU-weeks); why lead time and
+  MOQ live in configuration keyed by family rather than on the supplier dimension (one source of
+  truth per fact); why the two purchase-order cancellation reasons must stay distinct values
+  rather than collapsing into one `cancelled` status, because the OTIF KPI treats them differently.
+- **Checks run and actual results:** `python -m pytest` → `17 passed` (documentation-only change,
+  run to confirm no regression). No database exists yet to check the dictionary against.
+- **Known limitations / decisions:** `ASM-11`'s family split (35/25/25/15%) is an invented,
+  labelled, configurable percentage, not a measured warehouse capability — it will over-report
+  family-level capacity overload compared with a warehouse that can reallocate pickers across
+  families within a week. Returns, stockout censoring, promotions and collection end-of-life
+  remain open and are deferred to the tasks that explicitly depend on them (P1.2, P1.3, P2.3).
+- **Next task:** P1.2 — design the PostgreSQL schema (`sql/`) directly from this dictionary:
+  primary/foreign keys, `CHECK` constraints on `family` and `status`, and confirmation that the
+  schema can be created on a fresh development database.
+- **Question I can now answer without AI:** why `fct_purchase_order_line.promised_receipt_date`
+  must be immutable once a purchase order is confirmed, and why `cancelled_by_alpiflow` and
+  `cancelled_by_supplier` cannot be merged into a single `cancelled` status.
