@@ -27,16 +27,25 @@ python -m pip install -r requirements.txt
 cp .env.example .env
 #    then edit .env with your local PostgreSQL values
 
-# 4. Verification: the smoke test must pass
+# 4. Create a least-privilege role and a dev database, then the schema (P1.2)
+#    Run as a PostgreSQL superuser once; PGUSER/PGDATABASE must match your .env.
+createuser --login --pwprompt supply_planning_app
+createdb --owner=supply_planning_app supply_planning_lab
+for f in sql/*.sql; do psql -d supply_planning_lab -U supply_planning_app -f "$f"; done
+
+# 5. Verification: the smoke test must pass
 python -m pytest
 ```
 
-Expected result at step 4: `5 passed`. The smoke test connects to no database; it
+Expected result at step 5: `17 passed`. The smoke test connects to no database; it
 only checks that the package and its dependencies import, and that configuration
 loading refuses to start with missing variables.
 
-PostgreSQL is not required yet at this stage — it becomes necessary at task P1.2 of
-`docs/ROADMAP.md`.
+Step 4 creates `raw`, `clean` and `analytics` schemas with 7 tables each
+(`docs/DATA_DICTIONARY.md`), with their keys and constraints — see
+`docs/ARCHITECTURE.md` §3 for why the three schemas exist. If your machine already
+runs a PostgreSQL server on the default port for other work, point `PGHOST`/`PGPORT`
+in `.env` at a separate instance or port rather than reusing that one.
 
 ### Adding a dependency
 

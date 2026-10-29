@@ -39,7 +39,7 @@ Status values: `TODO`, `IN_PROGRESS`, `BLOCKED`, `DONE`. Do not mark a task DONE
   - Inventory and delivery KPIs have formulas and caveats.
 
 ### P1.2 — Design PostgreSQL schema
-- Status: TODO
+- Status: DONE (2026-10-29)
 - Deliverables: versioned SQL under `sql/`
 - Acceptance criteria:
   - Primary/foreign keys and relevant constraints are defined.

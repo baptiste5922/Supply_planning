@@ -126,3 +126,53 @@ Append one entry after each meaningful working session. Keep entries concise and
 - **Question I can now answer without AI:** why `fct_purchase_order_line.promised_receipt_date`
   must be immutable once a purchase order is confirmed, and why `cancelled_by_alpiflow` and
   `cancelled_by_supplier` cannot be merged into a single `cancelled` status.
+
+### 2026-10-29 — P1.2 PostgreSQL schema
+- **Goal:** translate `docs/DATA_DICTIONARY.md` directly into versioned SQL DDL for the three
+  schemas, and prove — not just assert — that it creates cleanly and that its constraints work.
+- **Implemented:**
+  - `sql/001_create_schemas.sql`, `sql/002_raw_tables.sql`, `sql/003_clean_tables.sql`,
+    `sql/004_analytics_tables.sql`: `raw` (7 loose-typed tables + ingestion metadata, no PK on
+    business keys — append-only), `clean` (7 typed/keyed tables, plain names, PK/FK/CHECK exactly
+    per the dictionary), `analytics` (same 7 tables, `dim_`/`fct_` prefixes). Decision: `clean` and
+    `analytics` share the same shape for v1 — no transformation exists yet to justify a
+    difference; the schema boundary is there so one can later diverge without touching the other.
+  - `README.md`: added the dev-database setup step (createuser/createdb/`psql -f sql/*.sql`) and
+    corrected a stale test count (`5 passed` → `17 passed`, left over from P0.1).
+- **Concepts learned:** why a weekly fact's `week_start_date` can `REFERENCES calendar(calendar_date)`
+  directly — the Monday of every week is itself a row in the daily calendar table, so no separate
+  "weeks" table is needed; why some documented rules (`unit_of_measure`'s constancy, `site_id`'s
+  single current value, `promised_receipt_date`'s immutability) are deliberately **not** encoded as
+  `CHECK` constraints — a `CHECK` would force a schema migration exactly when the documented
+  future extension (multi-unit, multi-site) happens, which defeats the column's stated purpose;
+  why `raw` has no uniqueness on business keys (append-only, dedup happens on the way to `clean`).
+- **Checks run and actual results:**
+  - Started an isolated Homebrew PostgreSQL 18 on port 5433 (the machine already runs a system
+    PostgreSQL on 5432 for other work, managed by pgAdmin — left untouched on purpose).
+  - `createuser supply_planning_app` (no superuser/createdb attributes) + `createdb
+    supply_planning_lab`; ran the four SQL files in order with `psql -v ON_ERROR_STOP=1` →
+    21/21 `CREATE TABLE`/`CREATE SCHEMA` statements succeeded, 0 errors.
+  - Re-ran the same four files against the already-created schema → all `NOTICE: ... already
+    exists, skipping`, 0 errors (idempotency check).
+  - Inserted valid rows into `clean.product`/`clean.calendar`/`clean.demand_actual`, then
+    deliberately tried three invalid inserts: a `FOOT` product with no `size` (rejected by
+    `product_size_matches_family`), an unknown `family` value (rejected by the `family` `CHECK`),
+    and a `demand_actual` row pointing at a non-existent `product_id` (rejected by the foreign
+    key) — all three failed exactly as designed.
+  - Dropped and recreated `supply_planning_lab` from scratch, re-ran the four files once more →
+    clean database, 7 tables in each of `raw`/`clean`/`analytics`, 0 errors. This is the state the
+    database is left in.
+  - `python -m pytest` → `17 passed` (no application code changed; regression check only).
+- **Known limitations / decisions:** `clean` and `analytics` are currently identical in shape —
+  acceptable for v1 per `docs/ARCHITECTURE.md` ("no layer added just to look sophisticated"), but
+  P1.4/P1.5 may reveal a real transformation that belongs only in `analytics`. `raw` table shapes
+  are a forecast of what P1.3's generator will produce, typed loosely in TEXT; if the generator's
+  actual columns differ, `sql/002_raw_tables.sql` will need a follow-up migration file, not an edit
+  to this one. The local `.env` points at a project-only PostgreSQL instance on port 5433,
+  deliberately separate from the pre-existing system PostgreSQL on this machine.
+- **Next task:** P1.3 — build the deterministic synthetic dataset (generator + `data/sample/`
+  fixtures), which will also settle the still-open stockout-censoring question before anything is
+  generated.
+- **Question I can now answer without AI:** why `clean.calendar` doesn't need a separate "weeks"
+  table for a weekly fact to reference, and why three of the dictionary's documented rules are
+  deliberately left unenforced by a `CHECK` constraint.
