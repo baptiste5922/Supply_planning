@@ -1,0 +1,121 @@
+product_id,product_name,family,size,unit_of_measure,source_system,source_file,extracted_at,load_id
+FOOT-03-41,Crest Trail Shoe,FOOT,41,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-02-47,Summit Trail Shoe,FOOT,47,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-01-38,Ridge Trail Shoe,FOOT,38,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+PACK-019,Trail Pole 019,PACK,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+PACK-010,Hydration Vest 10L 010,PACK,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+PACK-002,Hydration Vest 10L 002,PACK,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+PACK-001,Hydration Vest 5L 001,PACK,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-02-43,Summit Trail Shoe,FOOT,43,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+PACK-011,Trail Pole 011,PACK,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+PACK-020,Running Belt 020,PACK,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-01-40,Ridge Trail Shoe,FOOT,40,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+APPAREL-021,Windshell Jacket 021,APPAREL,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+NUTRI-009,Electrolyte Tablet 009,NUTRI,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-03-46,Crest Trail Shoe,FOOT,46,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+APPAREL-010,Trail Tee 010,APPAREL,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-03-36,Crest Trail Shoe,FOOT,36,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-05-37,Alpenglow Trail Shoe,FOOT,37,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+PACK-006,Hydration Vest 10L 006,PACK,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-05-40,Alpenglow Trail Shoe,FOOT,40,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+NUTRI-013,Energy Gel 013,NUTRI,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-02-41,Summit Trail Shoe,FOOT,41,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-04-42,Traverse Trail Shoe,FOOT,42,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-02-45,Summit Trail Shoe,FOOT,45,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+APPAREL-024,Running Short 024,APPAREL,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-02-46,Summit Trail Shoe,FOOT,46,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-02-44,Summit Trail Shoe,FOOT,44,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+NUTRI-002,Energy Bar 002,NUTRI,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+NUTRI-001,Energy Gel 001,NUTRI,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+PACK-013,Hydration Vest 5L 013,PACK,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+NUTRI-008,Energy Bar 008,NUTRI,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+NUTRI-015,Electrolyte Tablet 015,NUTRI,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+APPAREL-018,Trail Tee 018,APPAREL,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+NUTRI-007,Energy Gel 007,NUTRI,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+APPAREL-004,Running Short 004,APPAREL,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-01-42,Ridge Trail Shoe,FOOT,42,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-04-41,Traverse Trail Shoe,FOOT,41,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+APPAREL-008,Running Short 008,APPAREL,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-01-44,Ridge Trail Shoe,FOOT,44,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+PACK-008,Running Belt 008,PACK,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+APPAREL-022,Trail Tee 022,APPAREL,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+PACK-004,Running Belt 004,PACK,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+APPAREL-007,Thermal Sleeve 007,APPAREL,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+NUTRI-004,Energy Gel 004,NUTRI,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+NUTRI-003,Electrolyte Tablet 003,NUTRI,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+APPAREL-015,Thermal Sleeve 015,APPAREL,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+APPAREL-025,Windshell Jacket 025,APPAREL,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-02-40,Summit Trail Shoe,FOOT,40,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-03-45,Crest Trail Shoe,FOOT,45,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+APPAREL-002,Trail Tee 002,APPAREL,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+APPAREL-001,Windshell Jacket 001,APPAREL,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-04-38,Traverse Trail Shoe,FOOT,38,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+NUTRI-010,Energy Gel 010,NUTRI,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-05-39,Alpenglow Trail Shoe,FOOT,39,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+NUTRI-011,Energy Bar 011,NUTRI,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-03-39,Crest Trail Shoe,FOOT,39,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-01-43,Ridge Trail Shoe,FOOT,43,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-05-43,Alpenglow Trail Shoe,FOOT,43,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-03-43,Crest Trail Shoe,FOOT,43,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-03-47,Crest Trail Shoe,FOOT,47,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+APPAREL-013,Windshell Jacket 013,APPAREL,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+PACK-005,Hydration Vest 5L 005,PACK,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-03-37,Crest Trail Shoe,FOOT,37,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-01-41,Ridge Trail Shoe,FOOT,41,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-05-42,Alpenglow Trail Shoe,FOOT,42,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-05-47,Alpenglow Trail Shoe,FOOT,47,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-04-46,Traverse Trail Shoe,FOOT,46,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-04-47,Traverse Trail Shoe,FOOT,47,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-01-39,Ridge Trail Shoe,FOOT,39,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-04-39,Traverse Trail Shoe,FOOT,39,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-02-42,Summit Trail Shoe,FOOT,42,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-05-46,Alpenglow Trail Shoe,FOOT,46,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+PACK-007,Trail Pole 007,PACK,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-04-37,Traverse Trail Shoe,FOOT,37,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+APPAREL-009,Windshell Jacket 009,APPAREL,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+NUTRI-005,Energy Bar 005,NUTRI,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-01-47,Ridge Trail Shoe,FOOT,47,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-04-43,Traverse Trail Shoe,FOOT,43,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-01-45,Ridge Trail Shoe,FOOT,45,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+NUTRI-012,Electrolyte Tablet 012,NUTRI,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-05-36,Alpenglow Trail Shoe,FOOT,36,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-04-45,Traverse Trail Shoe,FOOT,45,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-04-44,Traverse Trail Shoe,FOOT,44,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-03-44,Crest Trail Shoe,FOOT,44,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-05-38,Alpenglow Trail Shoe,FOOT,38,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-03-38,Crest Trail Shoe,FOOT,38,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+NUTRI-014,Energy Bar 014,NUTRI,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+PACK-017,Hydration Vest 5L 017,PACK,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+PACK-003,Trail Pole 003,PACK,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-01-37,Ridge Trail Shoe,FOOT,37,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-05-45,Alpenglow Trail Shoe,FOOT,45,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-02-36,Summit Trail Shoe,FOOT,36,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-04-36,Traverse Trail Shoe,FOOT,36,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-02-38,Summit Trail Shoe,FOOT,38,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-01-46,Ridge Trail Shoe,FOOT,46,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+APPAREL-019,Thermal Sleeve 019,APPAREL,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-01-36,Ridge Trail Shoe,FOOT,36,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-03-42,Crest Trail Shoe,FOOT,42,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-05-44,Alpenglow Trail Shoe,FOOT,44,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+APPAREL-016,Running Short 016,APPAREL,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+PACK-018,Hydration Vest 10L 018,PACK,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+PACK-012,Running Belt 012,PACK,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+APPAREL-003,Thermal Sleeve 003,APPAREL,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+PACK-014,Hydration Vest 10L 014,PACK,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+PACK-015,Trail Pole 015,PACK,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+PACK-009,Hydration Vest 5L 009,PACK,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+APPAREL-011,Thermal Sleeve 011,APPAREL,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+APPAREL-014,Trail Tee 014,APPAREL,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+PACK-016,Running Belt 016,PACK,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-05-41,Alpenglow Trail Shoe,FOOT,41,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+APPAREL-012,Running Short 012,APPAREL,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+APPAREL-020,Running Short 020,APPAREL,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+APPAREL-017,Windshell Jacket 017,APPAREL,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-03-40,Crest Trail Shoe,FOOT,40,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-02-37,Summit Trail Shoe,FOOT,37,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+NUTRI-006,Electrolyte Tablet 006,NUTRI,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+APPAREL-023,Thermal Sleeve 023,APPAREL,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+APPAREL-006,Trail Tee 006,APPAREL,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+APPAREL-005,Windshell Jacket 005,APPAREL,,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-04-40,Traverse Trail Shoe,FOOT,40,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+FOOT-02-39,Summit Trail Shoe,FOOT,39,piece,synthetic_generator,product.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf

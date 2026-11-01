@@ -1,0 +1,7 @@
+supplier_id,supplier_name,source_system,source_file,extracted_at,load_id
+SUP-01,Pyrenees Textile Co.,synthetic_generator,supplier.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+SUP-02,Dolomiti Footwear Group,synthetic_generator,supplier.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+SUP-03,Massif Central Outdoor Supply,synthetic_generator,supplier.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+SUP-04,Nordic Trail Nutrition,synthetic_generator,supplier.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+SUP-05,Alps Gear Manufacturing,synthetic_generator,supplier.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf
+SUP-06,Cevennes Pack & Carry,synthetic_generator,supplier.csv,2026-11-01T20:21:31.133971+00:00,sample-896d4846-5694-4643-84cd-b1f45a3465cf

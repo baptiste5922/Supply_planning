@@ -105,6 +105,7 @@ channels"), because a single warehouse serves both and the replenishment decisio
 | `product_id` | text | no | **PK, FK → dim_product** | — | |
 | `week_start_date` | date | no | **PK, FK → dim_calendar** | — | |
 | `units_sold` | integer | no | — | piece | Gross units sold that week, all channels combined. `>= 0`. |
+| `was_stocked_out` | boolean | no | — | — | `true` if the SKU was out of stock for at least part of the week, decided by P1.3 (`docs/BUSINESS_RULES.md` §6). Distinguishes "zero because no demand" from "zero (or reduced) because we could not supply it" — the second case is **censored** demand, not observed demand, and must not be fed to a forecasting model as if it were a true signal (relevant for P2.1). Added in P1.3, not guessed at ingestion time: only the generator (or, later, the real source) knows which case applies. |
 
 **Missing-data rule — the important one:** every `product_id` that is active during a given
 `week_start_date` **must have a row**, even when `units_sold = 0`. A missing row is a data-quality
@@ -121,9 +122,10 @@ demand" or "the extract failed for that SKU." Collapsing the two would hide the 
   `FOOT` is therefore slightly overstated. Accepted for v1 to avoid modelling the time lag between
   a sale and its later return before any schema exists; revisit in Phase 2 only if the EDA shows
   it matters.
-- **Stockout censoring is a separate, still-open question** (`docs/BUSINESS_RULES.md` §6, affects
-  P1.3) — whether a `was_stocked_out` flag is generated. Not a field here; decide it when P1.3
-  builds the generator, not before.
+- **Stockout censoring is decided (P1.3): a `was_stocked_out` flag is generated**, see the field
+  table above. `units_sold` itself is still the raw count actually sold (possibly reduced by the
+  stockout) — the flag tells the reader *that* censoring may have happened, it does not correct
+  the number.
 - **Promotions** (`promotion_flag`) — open question affecting P2.3, deferred for the same reason.
 
 ---

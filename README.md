@@ -33,13 +33,19 @@ createuser --login --pwprompt supply_planning_app
 createdb --owner=supply_planning_app supply_planning_lab
 for f in sql/*.sql; do psql -d supply_planning_lab -U supply_planning_app -f "$f"; done
 
-# 5. Verification: the smoke test must pass
+# 5. Verification: the smoke and generator tests must pass
 python -m pytest
+
+# 6. (Optional) Regenerate the synthetic sample dataset (P1.3) — deterministic,
+#    re-running it reproduces data/sample/*.csv exactly (see data/sample/README.md)
+PYTHONPATH=src python scripts/generate_sample_data.py --preset sample
 ```
 
-Expected result at step 5: `17 passed`. The smoke test connects to no database; it
-only checks that the package and its dependencies import, and that configuration
-loading refuses to start with missing variables.
+Expected result at step 5: `43 passed`. The smoke tests connect to no database;
+they only check that the package and its dependencies import, and that
+configuration loading refuses to start with missing variables. The generator
+tests (`tests/test_generator.py`) check determinism and the documented edge cases
+of the P1.3 synthetic dataset, also without a database.
 
 Step 4 creates `raw`, `clean` and `analytics` schemas with 7 tables each
 (`docs/DATA_DICTIONARY.md`), with their keys and constraints — see

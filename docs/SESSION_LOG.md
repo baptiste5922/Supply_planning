@@ -176,3 +176,63 @@ Append one entry after each meaningful working session. Keep entries concise and
 - **Question I can now answer without AI:** why `clean.calendar` doesn't need a separate "weeks"
   table for a weekly fact to reference, and why three of the dictionary's documented rules are
   deliberately left unenforced by a `CHECK` constraint.
+
+### 2026-11-01 — P1.3 Synthetic dataset generator
+- **Goal:** build a deterministic, seeded generator for all seven P1.3 tables, settle the
+  still-open "stockout-censored sales" question first, and produce a small committed fixture
+  under `data/sample/` with documented edge cases for P1.4/P1.5 to test against.
+- **Implemented:**
+  - Decision (user-confirmed): `was_stocked_out` is added to `fct_demand_actual`. Closed in
+    `docs/BUSINESS_RULES.md` §6 and `docs/DATA_DICTIONARY.md` §4.
+  - `sql/005_add_stockout_flag.sql`: a follow-up migration (not an edit to `002`/`003`/`004`, per
+    the decision already recorded when those files were written) adding the column to
+    `raw`/`clean`/`analytics`, `NOT NULL` with the `DEFAULT` dropped immediately after the `ALTER`.
+  - `src/supply_planning/generator/`: `assumptions.py` (typed `ASM-03/04/05/06/07/09/11` register,
+    validated at construction — e.g. `capacity_share` must sum to 1.0), `calendar.py`, `product.py`,
+    `supplier.py`, `demand.py`, `inventory.py`, `purchase_order.py`, `capacity.py`, `run.py`
+    (orchestrator + raw-shaped CSV writer).
+  - `scripts/generate_sample_data.py`: CLI with a `sample` preset (small, fixed window, committed)
+    and a `full` preset (realistic ~120-SKU/3-year volume, gitignored under `data/raw/synthetic/`).
+  - `data/sample/*.csv` (120 products, 6 suppliers, 30 weeks of demand/inventory/capacity, 240
+    purchase-order lines) + `data/sample/README.md` documenting five deliberate edge cases by exact
+    key (missing SKU-week, a genuine zero-demand run, negative available stock, a missing promised
+    receipt date, one overloaded family-week) and the full OTIF/status rotation in purchase orders.
+  - `tests/test_generator.py` (26 tests): determinism per table and end-to-end, every documented
+    edge case asserted by exact key, grain/shape invariants (FOOT has `size`, others don't; qty
+    fields never negative).
+  - `README.md`: step 5 expected count corrected (`17` → `43` passed); added an optional step 6 to
+    regenerate the sample dataset.
+- **Concepts learned:** why a pure function of `(seed, start_date, end_date, assumptions)` — no
+  hidden `date.today()` inside — is what "reproducible" actually requires, and why the committed
+  fixture therefore uses a *frozen* window rather than a wall-clock-relative one; why a malformed
+  source value (`promised_receipt_date = None`) can only be represented in `raw` and not in `clean`,
+  because `clean`'s `NOT NULL` constraint would reject it — the generator models that by typing the
+  field `date | None` only at the raw-shaped dataclass level; why a fixed, index-based case rotation
+  (not pure randomness) is what actually *guarantees* every status/OTIF outcome appears, rather than
+  hoping a random draw hits all six eventually.
+- **Checks run and actual results:**
+  - `python -m pytest` → `43 passed` (26 new generator tests + 17 pre-existing smoke tests).
+  - Ran `scripts/generate_sample_data.py --preset sample` twice to a scratch directory and diffed
+    every output file against the committed `data/sample/*.csv`, excluding the `extracted_at`/
+    `load_id` metadata columns → byte-identical on all seven files, confirming reproducibility
+    directly rather than only through the determinism unit tests.
+  - Applied `sql/005_add_stockout_flag.sql` against the dev database (`supply_planning_lab`, port
+    5433, left running from P1.2) after the four `sql/00[1-4]*.sql` files → 0 errors; re-ran it a
+    second time → `NOTICE: ... already exists, skipping` on every statement, 0 errors (idempotency
+    check). `\d` confirms `was_stocked_out boolean not null`, no default, on `clean.demand_actual`
+    and `analytics.fct_demand_actual`, and `was_stocked_out text` (nullable) on `raw.demand_actual`.
+- **Known limitations / decisions:** demand and inventory are generated independently per
+  product-week (scaled by family magnitude/safety-stock assumptions), not by simulating the
+  demand → receipt → stock recurrence end-to-end — P1.5 validates that recurrence by hand on its
+  own small example instead. Purchase-order volume is a fixed 2 lines/SKU, not a time-phased
+  reorder simulation — a deliberate scope cut for a "small sample fixture", not a production-volume
+  ordering model. The exact seasonal ISO-week ranges implementing `ASM-09`'s qualitative description
+  are this generator's own interpretation, disclosed in `assumptions.py`'s comments, not a new
+  registered assumption.
+- **Next task:** P1.4 — implement ingestion and quality checks (`src/`) against `data/sample/`:
+  logged row counts, invalid-record reporting (not silent dropping), duplicate/missing-key checks,
+  and at least one automated test covering a failure case. The five documented edge cases above are
+  exactly what those checks must catch.
+- **Question I can now answer without AI:** why `promised_receipt_date` can be `NULL` in `raw` but
+  never in `clean`, and why the fixture's date window is hard-coded rather than computed from
+  "today".
