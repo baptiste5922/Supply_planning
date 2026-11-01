@@ -30,8 +30,20 @@ class DatabaseSettings:
 
         Use `hide_password=True` for logs and error messages: a password must never
         be written to a console output or a log file.
+
+        A URL's host component cannot contain a `/` - but a Unix-socket `PGHOST`
+        (e.g. Homebrew Postgres's `/tmp`) is a directory path, not a hostname.
+        libpq/psycopg's own convention for that case is to leave the host empty
+        and pass the socket directory as a `host` query parameter instead
+        (bug found in P1.4: P1.2 only ever connected via the `psql` CLI, which
+        takes `-h /tmp` directly and never went through this method).
         """
         secret = "***" if hide_password else self.password
+        if self.host.startswith("/"):
+            return (
+                f"postgresql+psycopg://{self.user}:{secret}"
+                f"@/{self.database}?host={self.host}&port={self.port}"
+            )
         return (
             f"postgresql+psycopg://{self.user}:{secret}"
             f"@{self.host}:{self.port}/{self.database}"

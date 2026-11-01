@@ -55,6 +55,18 @@ def test_sqlalchemy_url_can_hide_the_password() -> None:
     assert "***" in masked
 
 
+def test_sqlalchemy_url_handles_a_unix_socket_host() -> None:
+    """PGHOST can be a socket directory (e.g. Homebrew Postgres's /tmp), not a
+    hostname - a URL host component cannot contain '/', so it must move to a
+    query parameter instead (bug found in P1.4, see sqlalchemy_url's docstring)."""
+    settings = DatabaseSettings(
+        host="/tmp", port=5433, database="supply_planning_lab", user="app", password="s3cret"
+    )
+    assert settings.sqlalchemy_url() == (
+        "postgresql+psycopg://app:s3cret@/supply_planning_lab?host=/tmp&port=5433"
+    )
+
+
 def test_missing_configuration_raises_instead_of_defaulting(
     monkeypatch: pytest.MonkeyPatch, tmp_path
 ) -> None:

@@ -39,13 +39,20 @@ python -m pytest
 # 6. (Optional) Regenerate the synthetic sample dataset (P1.3) — deterministic,
 #    re-running it reproduces data/sample/*.csv exactly (see data/sample/README.md)
 PYTHONPATH=src python scripts/generate_sample_data.py --preset sample
+
+# 7. (Optional) Run the ingestion pipeline (P1.4): data/sample/ -> raw -> clean
+#    -> analytics, logging row counts and every data-quality issue found
+PYTHONPATH=src python scripts/run_ingestion.py
 ```
 
-Expected result at step 5: `43 passed`. The smoke tests connect to no database;
-they only check that the package and its dependencies import, and that
-configuration loading refuses to start with missing variables. The generator
-tests (`tests/test_generator.py`) check determinism and the documented edge cases
-of the P1.3 synthetic dataset, also without a database.
+Expected result at step 5: `88 passed`. The smoke and generator tests connect to
+no database. The ingestion tests (`tests/test_ingestion.py`) validate each
+table's rules against in-memory rows, also without a database — step 7 is the
+only step that actually writes to PostgreSQL. Running step 7 against
+`data/sample/` should report exactly 4 issues: one `missing_sku_week`, one
+`negative_available_stock`, one rejected `purchase_order_line` (missing
+`promised_receipt_date`), and one `capacity_overload` — see
+`data/sample/README.md` for the exact keys.
 
 Step 4 creates `raw`, `clean` and `analytics` schemas with 7 tables each
 (`docs/DATA_DICTIONARY.md`), with their keys and constraints — see
