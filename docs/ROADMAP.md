@@ -48,7 +48,7 @@ Status values: `TODO`, `IN_PROGRESS`, `BLOCKED`, `DONE`. Do not mark a task DONE
   - No Odoo internal tables are modified.
 
 ### P1.3 — Build a small synthetic dataset
-- Status: TODO
+- Status: DONE (2026-11-01)
 - Deliverables: deterministic data generator and small sample fixture
 - Acceptance criteria:
   - Re-running generation produces reproducible records.

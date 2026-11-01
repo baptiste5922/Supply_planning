@@ -8,7 +8,8 @@
 - **Status:** v1 — P0.1 (amended 2026-10-20 by P0.3: the "source of truth per field" open
   question is now answered in `docs/ARCHITECTURE.md` §4; amended 2026-10-21 by P1.1: the
   "e-commerce returns" open question is closed, and `ASM-11` is added to resolve a gap found
-  while writing `docs/DATA_DICTIONARY.md`)
+  while writing `docs/DATA_DICTIONARY.md`; amended 2026-11-01 by P1.3: the "stockout-censored
+  sales" open question is closed)
 - **Date:** 2026-10-19
 - **Structural decisions agreed:** grain SKU × week, 13-week horizon, single warehouse, unit = piece.
 
@@ -225,9 +226,11 @@ hard-coded into business logic.
 
 To be decided before the related implementation. **Do not silently invent an answer.**
 
-- [ ] **Stockout-censored sales.** When a SKU is out of stock, recorded sales are 0 even though
-      real demand was positive. Should the data generator produce a `was_stocked_out` column to
-      make censoring visible in Phase 2? *(affects P1.3 and P2.1)*
+- [x] **Stockout-censored sales.** *Decided in P1.3:* the generator produces a `was_stocked_out`
+      boolean on `analytics.fct_demand_actual` (see `docs/DATA_DICTIONARY.md` §4). `units_sold`
+      is not corrected — the flag only tells a downstream reader (notably the P2.1 EDA) that the
+      recorded number may understate true demand for that SKU-week, so censored weeks are not
+      silently treated as a true zero-demand signal.
 - [x] **E-commerce returns.** *Decided in P1.1:* returns are **ignored in v1**. `units_sold` in
       `analytics.fct_demand_actual` is gross, not corrected for later `D2C` returns. This is a
       known limitation (see `docs/DATA_DICTIONARY.md`, demand actual table): true consumer demand
