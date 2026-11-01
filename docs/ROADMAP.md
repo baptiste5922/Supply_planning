@@ -56,7 +56,7 @@ Status values: `TODO`, `IN_PROGRESS`, `BLOCKED`, `DONE`. Do not mark a task DONE
   - Data is clearly labelled synthetic.
 
 ### P1.4 — Implement ingestion and quality checks
-- Status: TODO
+- Status: DONE (2026-11-01)
 - Deliverables: reusable Python modules under `src/`
 - Acceptance criteria:
   - Ingestion is logged and reports row counts.

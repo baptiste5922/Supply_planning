@@ -236,3 +236,68 @@ Append one entry after each meaningful working session. Keep entries concise and
 - **Question I can now answer without AI:** why `promised_receipt_date` can be `NULL` in `raw` but
   never in `clean`, and why the fixture's date window is hard-coded rather than computed from
   "today".
+
+### 2026-11-01 — P1.4 Ingestion and quality checks
+- **Goal:** build the `raw -> clean -> analytics` ingestion pipeline (docs/ARCHITECTURE.md §1) for
+  all seven tables, implementing each table's missing-data rule from `docs/DATA_DICTIONARY.md`
+  exactly, and verify it against the five edge cases P1.3 deliberately built into `data/sample/`.
+- **Implemented:**
+  - `src/supply_planning/ingestion/quality.py`: `QualityIssue`/`QualityReport`, formalising three
+    distinct outcomes a row can have - `REJECTED` (excluded from `clean`), `FLAGGED` (loaded *and*
+    reported - a valid but noteworthy fact), `MISSING` (no row to reject; the absence itself is the
+    defect, found by comparing loaded keys against the batch's own expected grid).
+  - `validators.py`: small parsers (`parse_int`, `parse_date`, `parse_bool`, ...) that return
+    `(value, error)` instead of raising, so a bad row is reported, never an unhandled exception.
+  - `raw_loader.py` (CSV -> `raw`, append-only, stamps *this run's* `source_system`/`extracted_at`/
+    `load_id` rather than trusting the file's own metadata columns), `db_writer.py` (generic
+    `INSERT ... ON CONFLICT DO UPDATE` upsert, shared by `clean` and `analytics`), one module per
+    table (`product.py` ... `capacity.py`) encoding each table's own rules, `analytics_loader.py`
+    (straight `clean -> analytics` copy, same shape in v1), `run.py` (orchestrator: dimensions
+    first, then facts, using the dimensions' own just-validated rows as the foreign-key lookup
+    sets - no extra round trip to re-read what was just written).
+  - `scripts/run_ingestion.py`: CLI, logs row counts per table and every quality issue.
+  - **Bug fix (found while verifying against the real database, not part of the original plan):**
+    `config.py`'s `sqlalchemy_url()` built an invalid URL for a Unix-socket `PGHOST` (`/tmp`) - a
+    URL host component cannot contain `/`. P1.2 never hit this because it only ever connected via
+    the `psql` CLI (`-h /tmp`); P1.4 is the first Python code to open a real connection. Fixed by
+    moving the socket path to a `host=` query parameter per libpq/psycopg convention, with a new
+    test (`test_sqlalchemy_url_handles_a_unix_socket_host`).
+  - `tests/test_ingestion.py` (44 tests): every documented edge case asserted by exact reason code
+    and key, plus the explicit "a true zero must never be flagged" case.
+  - `README.md`, `docs/ROADMAP.md` (P1.4 → DONE).
+- **Concepts learned:** why "invalid" is not one concept - a row can be too broken to use
+  (`REJECTED`), valid but alarming (`FLAGGED`, loaded anyway), or simply absent (`MISSING`, nothing
+  to reject); why a missing `promised_receipt_date` is rejected regardless of `status`, even though
+  `docs/DATA_DICTIONARY.md` discusses it in terms of three specific statuses - the schema's
+  `NOT NULL` constraint has no such exception, so ingestion's "is this loadable" question is
+  stricter than P1.5's later "which calculation excludes it" question; why `raw`'s own extract step
+  must re-stamp ingestion metadata rather than trust a source file that happens to already have
+  similarly-named columns.
+- **Checks run and actual results:**
+  - `python -m pytest` → `88 passed` (44 new ingestion tests + 26 generator + 18 smoke, one of
+    which is new).
+  - Ran `scripts/run_ingestion.py` against `data/sample/` on the dev database (`supply_planning_lab`,
+    port 5433) after truncating every table → logged exactly 4 issues, matching
+    `data/sample/README.md` by exact key: `missing_sku_week` (`APPAREL-001`/`2026-09-21`),
+    `negative_available_stock` (`APPAREL-003`/`2026-03-02`), one rejected `purchase_order_line`
+    (`PO-00001`, missing `promised_receipt_date`), `capacity_overload` (`FOOT`/`2026-06-15`). The
+    zero-demand run (`APPAREL-002`) produced zero issues, confirmed by query.
+  - Row counts after that run: `clean.product`/`analytics.dim_product` = 120, `clean.demand_actual`/
+    `analytics.fct_demand_actual` = 3599 (3600 − 1 missing), `clean.purchase_order_line` = 239
+    (240 − 1 rejected) - `clean` and `analytics` match exactly on every table, as expected from a
+    straight copy.
+  - Idempotency: re-ran the same ingestion a second time without truncating → `raw.product`
+    120 → 240 and `raw.demand_actual` 3599 → 7198 (append, as designed), while `clean`/`analytics`
+    row counts and content were unchanged (upsert, no duplicates). Then truncated and ran once more
+    to leave the database in a single, clean load.
+- **Known limitations / decisions:** `analytics` is populated as a plain copy of `clean` with no
+  additional transformation, per the P1.2 decision that the two schemas share a shape in v1 - P1.5
+  is where a real transformation (if any) would first appear. Duplicate keys within one batch are
+  rejected *in full* (both/all copies), never resolved by picking a "first" row - consistent with
+  "report, never guess", but means a genuine duplicate costs two good-looking rows, not one.
+- **Next task:** P1.5 — calculate planning KPIs and exceptions (coverage, projected shortage,
+  capacity utilisation, OTIF) from `analytics`, validated against a small hand-calculated example.
+- **Question I can now answer without AI:** why a missing `promised_receipt_date` is rejected for
+  every `status`, not just the three `docs/DATA_DICTIONARY.md` discusses, and why `raw` growing on
+  every ingestion run while `clean`/`analytics` stay the same size is the idempotency property
+  working correctly, not a bug.
