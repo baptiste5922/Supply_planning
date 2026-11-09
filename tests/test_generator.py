@@ -230,7 +230,7 @@ def test_generate_capacity_has_one_overloaded_week() -> None:
 
 
 def test_generate_capacity_shares_sum_to_total() -> None:
-    from supply_planning.generator.assumptions import DEFAULT_ASSUMPTIONS
+    from supply_planning.assumptions import DEFAULT_ASSUMPTIONS
     from supply_planning.generator.capacity import generate_capacity
 
     rows, _ = generate_capacity(_TEN_WEEKS, seed=21)

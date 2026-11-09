@@ -21,10 +21,9 @@
   onto the business fields defined here.
 - **Missing-data rule** is listed explicitly per table/field because the project rule is "report,
   never guess" — see `docs/ARCHITECTURE.md` §2, ingestion "does not" column.
-- Tables not yet in scope — `fct_demand_forecast` (Phase 2, see P2.2) and
-  `fct_planning_exception` (an *output* of P1.5, not a source table) — are intentionally **not**
-  defined here. Defining them now, before the logic that produces them exists, would mean
-  guessing their shape.
+- `fct_demand_forecast` (Phase 2, see P2.2) is not yet in scope and intentionally **not** defined
+  here — defining it before the forecasting logic that produces it exists would mean guessing its
+  shape. `fct_projected_inventory`, the P1.5 planning output, **is** now defined — see §8.
 
 ---
 
@@ -212,7 +211,47 @@ blocker — utilisation cannot be computed and must be reported, not treated as 
 
 ---
 
-## 8. Keys and grain, at a glance
+## 8. `fct_projected_inventory` (P1.5 output)
+
+**Grain:** one row per `planning_origin_date` × `product_id` × `week_start_date`. The origin is
+part of the key, not metadata, so two planning runs on two different Mondays coexist instead of
+overwriting each other — `docs/BUSINESS_RULES.md` §4's recurrence is re-run from scratch each time,
+never patched in place.
+
+| Field | Type | Nullable | Key | Unit | Description |
+|---|---|---|---|---|---|
+| `planning_origin_date` | date | no | **PK, FK → dim_calendar** | — | The Monday the plan was computed from. |
+| `product_id` | text | no | **PK, FK → dim_product** | — | |
+| `week_start_date` | date | no | **PK, FK → dim_calendar** | — | At `weeks_ahead = 0` this is set to `planning_origin_date` itself — the recurrence's own `t=0` has no week of its own (see below), but a primary-key column cannot be `NULL`. |
+| `weeks_ahead` | integer | no | — | weeks | `t` in the recurrence, `0`–`13`. |
+| `demand_units` | integer | no | — | piece | `D_{s,t}`; `0` at `t=0`. |
+| `confirmed_receipt_units` | integer | no | — | piece | `R_{s,t}`; `0` at `t=0`, and `0` for any week with no `confirmed`/`partially_received` order due — a known fact, not a gap. |
+| `projected_inventory_units` | integer | no | — | piece | `PI_{s,t}` (`docs/BUSINESS_RULES.md` §4). **Not** constrained `>= 0` — negative is the shortage signal itself. |
+| `safety_stock_units` | integer | no | — | piece | `SS_s` (`[ASM-03]`), constant across `t`, stored per row for self-contained querying. |
+| `projected_shortage_units` | integer | no | — | piece | `max(0, SS_s - PI_{s,t})`. An "exception" is simply a row here with this `> 0`. |
+| `weeks_of_cover` | integer | **yes** | — | weeks | `docs/BUSINESS_RULES.md` §4.1. **`NULL` except at `weeks_ahead = 0`** — a property of the origin, not of each week; the same "legitimate `NULL` depending on context" pattern as `dim_product.size`. |
+| `no_forward_demand` | boolean | **yes** | — | — | Same rule as `weeks_of_cover`: populated only at `weeks_ahead = 0`. |
+
+**Missing-data rule:** a product with no inventory snapshot at or before the origin, or missing a
+demand figure for any week of the horizon, is excluded from this table entirely for that run and
+reported (`missing_inventory_snapshot` / `missing_demand_data`) — never computed with an assumed
+zero. A product whose family has no entry in the lead-time configuration is still written here
+(the recurrence itself does not need lead time), but is skipped when generating a replenishment
+suggestion, reported as `missing_lead_time`.
+
+**Demand source, stated explicitly:** until Phase 2 produces a real forecast, every week of the
+horizon — including weeks "in the future" relative to the origin — is read from
+`analytics.fct_demand_actual`. This is a disclosed Phase-1 simplification, not a claim that real
+future demand is known.
+
+**Deliberately not a stored table:** capacity utilisation and supplier OTIF
+(`docs/BUSINESS_RULES.md` §4.3, §4.4) need no new input data — they are two views,
+`analytics.v_capacity_utilisation` and `analytics.v_supplier_otif`, computed directly from
+`fct_capacity` and `fct_purchase_order_line` (`sql/006_planning_outputs.sql`).
+
+---
+
+## 9. Keys and grain, at a glance
 
 | Table | Primary key | Grain in words |
 |---|---|---|
@@ -223,8 +262,9 @@ blocker — utilisation cannot be computed and must be reported, not treated as 
 | `fct_inventory_snapshot` | `product_id`, `site_id`, `snapshot_date` | one SKU, one site, one weekly snapshot |
 | `fct_purchase_order_line` | `order_id`, `product_id` | one product line on one purchase order |
 | `fct_capacity` | `site_id`, `family`, `week_start_date` | one family's capacity, one site, one week |
+| `fct_projected_inventory` | `planning_origin_date`, `product_id`, `week_start_date` | one SKU, one week, one planning run |
 
-## 9. Carried over from P1.1 into P1.2
+## 10. Carried over from P1.1 into P1.2
 
 - `dim_product.family` must be constrained to the four known codes (`CHECK` or lookup table — a
   decision for P1.2, not this document).

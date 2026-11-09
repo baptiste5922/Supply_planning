@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .quality import IssueKind, QualityIssue, QualityReport
+from ..quality import IssueKind, QualityIssue, QualityReport
 from .validators import check_in_set, parse_date, parse_int, parse_optional_date, parse_optional_int
 
 TABLE_NAME = "purchase_order_line"

@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .quality import IssueKind, QualityIssue, QualityReport
+from ..quality import IssueKind, QualityIssue, QualityReport
 from .validators import parse_date, parse_int
 
 TABLE_NAME = "calendar"

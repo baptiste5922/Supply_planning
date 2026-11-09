@@ -20,7 +20,7 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from .assumptions import Assumptions, DEFAULT_ASSUMPTIONS
+from ..assumptions import Assumptions, DEFAULT_ASSUMPTIONS
 from .calendar import generate_calendar
 from .capacity import CapacityEdgeCases, generate_capacity
 from .demand import DemandEdgeCases, generate_demand

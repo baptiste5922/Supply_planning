@@ -14,7 +14,7 @@ from __future__ import annotations
 from datetime import date
 from typing import Any
 
-from .quality import IssueKind, QualityIssue, QualityReport
+from ..quality import IssueKind, QualityIssue, QualityReport
 from .validators import parse_date, parse_int, parse_required_text
 
 TABLE_NAME = "inventory_snapshot"

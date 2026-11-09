@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .quality import IssueKind, QualityIssue, QualityReport
+from ..quality import IssueKind, QualityIssue, QualityReport
 from .validators import check_in_set, parse_optional_text, parse_required_text
 
 TABLE_NAME = "product"

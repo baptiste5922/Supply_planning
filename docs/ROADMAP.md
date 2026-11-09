@@ -65,7 +65,7 @@ Status values: `TODO`, `IN_PROGRESS`, `BLOCKED`, `DONE`. Do not mark a task DONE
   - At least one automated test covers a failure case.
 
 ### P1.5 — Calculate planning KPIs and exceptions
-- Status: TODO
+- Status: DONE (2026-11-06)
 - Deliverables: SQL/Python logic and tests
 - Acceptance criteria:
   - Demand, supply, capacity and projected inventory are distinguishable.

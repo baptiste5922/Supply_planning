@@ -43,16 +43,27 @@ PYTHONPATH=src python scripts/generate_sample_data.py --preset sample
 # 7. (Optional) Run the ingestion pipeline (P1.4): data/sample/ -> raw -> clean
 #    -> analytics, logging row counts and every data-quality issue found
 PYTHONPATH=src python scripts/run_ingestion.py
+
+# 8. (Optional) Run the P1.5 planning KPIs: the projected-inventory recurrence
+#    for every product, written to analytics.fct_projected_inventory
+PYTHONPATH=src python scripts/run_planning.py
 ```
 
-Expected result at step 5: `88 passed`. The smoke and generator tests connect to
-no database. The ingestion tests (`tests/test_ingestion.py`) validate each
-table's rules against in-memory rows, also without a database — step 7 is the
-only step that actually writes to PostgreSQL. Running step 7 against
+Expected result at step 5: `100 passed`. The smoke, generator and ingestion
+tests connect to no database. The planning tests (`tests/test_planning.py`)
+include the project's mandatory hand-calculated 3-week example for the
+projected-inventory recurrence (docs/BUSINESS_RULES.md §4) — steps 7 and 8 are
+the only steps that actually write to PostgreSQL. Running step 7 against
 `data/sample/` should report exactly 4 issues: one `missing_sku_week`, one
 `negative_available_stock`, one rejected `purchase_order_line` (missing
 `promised_receipt_date`), and one `capacity_overload` — see
-`data/sample/README.md` for the exact keys.
+`data/sample/README.md` for the exact keys. Step 8 reports a `missing_lead_time`/
+`missing_demand_data` issue per excluded SKU (none expected against the default
+origin) and one `infeasible_replenishment` flag per SKU whose family's lead
+time cannot outrun its projected shortage — expect most SKUs to be flagged
+here, because `data/sample/`'s demand and inventory are generated
+independently (`data/sample/README.md`'s stated limitation), not as a
+consistent supply/demand simulation.
 
 Step 4 creates `raw`, `clean` and `analytics` schemas with 7 tables each
 (`docs/DATA_DICTIONARY.md`), with their keys and constraints — see

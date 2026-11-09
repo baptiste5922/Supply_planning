@@ -15,7 +15,7 @@ import random
 from dataclasses import dataclass
 from datetime import date
 
-from .assumptions import FAMILIES, Assumptions, DEFAULT_ASSUMPTIONS
+from ..assumptions import FAMILIES, Assumptions, DEFAULT_ASSUMPTIONS
 
 SITE_ID = "WH-01"  # constant in v1, docs/BUSINESS_RULES.md §1
 

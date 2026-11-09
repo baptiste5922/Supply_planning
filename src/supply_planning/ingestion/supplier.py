@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .quality import IssueKind, QualityIssue, QualityReport
+from ..quality import IssueKind, QualityIssue, QualityReport
 from .validators import parse_required_text
 
 TABLE_NAME = "supplier"

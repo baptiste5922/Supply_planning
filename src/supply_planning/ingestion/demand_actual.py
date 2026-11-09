@@ -18,7 +18,7 @@ from __future__ import annotations
 from datetime import date
 from typing import Any
 
-from .quality import IssueKind, QualityIssue, QualityReport
+from ..quality import IssueKind, QualityIssue, QualityReport
 from .validators import parse_bool, parse_date, parse_int
 
 TABLE_NAME = "demand_actual"

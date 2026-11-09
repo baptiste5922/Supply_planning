@@ -27,7 +27,7 @@ from . import purchase_order_line as purchase_order_line_module
 from . import supplier as supplier_module
 from .analytics_loader import copy_clean_to_analytics
 from .db_writer import upsert_rows
-from .quality import QualityReport
+from ..quality import QualityReport
 from .raw_loader import load_raw_table, read_business_rows
 
 SOURCE_SYSTEM = "csv_sample"

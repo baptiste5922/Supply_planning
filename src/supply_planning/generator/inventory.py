@@ -19,7 +19,7 @@ import random
 from dataclasses import dataclass
 from datetime import date
 
-from .assumptions import Assumptions, DEFAULT_ASSUMPTIONS
+from ..assumptions import Assumptions, DEFAULT_ASSUMPTIONS
 from .product import ProductRow
 
 SITE_ID = "WH-01"  # constant in v1, docs/BUSINESS_RULES.md §1
