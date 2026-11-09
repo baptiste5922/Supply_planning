@@ -124,7 +124,7 @@ keeps the demo simple, and schemas already give us the separation we need.
 |---|---|---|---|
 | `raw` | Exactly the source's grain | Source-shaped rows, loose types, plus ingestion metadata: `source_system`, `source_file`, `extracted_at`, `load_id` | No — this is the landing zone; it is what we keep |
 | `clean` | One documented grain per table, enforced by a primary key | Validated types, canonical keys, units normalised to pieces, dates as plain dates, duplicates removed | Yes, from `raw` |
-| `analytics` | Star-schema facts and dimensions, plus planning outputs | `dim_product`, `dim_calendar`, `dim_supplier`, `fct_demand_actual`, `fct_inventory_snapshot`, `fct_purchase_order_line`, `fct_capacity`, `fct_demand_forecast`, `fct_planning_exception` | Yes, from `clean` |
+| `analytics` | Star-schema facts and dimensions, plus planning outputs | `dim_product`, `dim_calendar`, `dim_supplier`, `fct_demand_actual`, `fct_inventory_snapshot`, `fct_purchase_order_line`, `fct_capacity`, `fct_demand_forecast` (Phase 2), `fct_projected_inventory` (P1.5) | Yes, from `clean` |
 
 **Why keep `raw` at all**, given it is messy by design? Because a data-quality question is always
 "was the value wrong at the source, or did my code break it?" Without `raw` you cannot answer that,
@@ -134,6 +134,15 @@ and without `extracted_at` you cannot reproduce a result someone saw last week.
 answers "is this row shaped for a question". Mixing them produces tables that are hard to validate
 and hard to query. The first version of each table stays deliberately simple — no layer is added
 just to look sophisticated.
+
+**Naming note (P1.5):** this document originally floated `fct_planning_exception` as a placeholder
+before the planning logic existed. The implemented shape is `analytics.fct_projected_inventory`
+(one row per SKU × week × planning origin, holding the full recurrence result, not only the
+exception weeks) plus two views, `analytics.v_capacity_utilisation` and `analytics.v_supplier_otif`,
+derived directly from `fct_capacity` and `fct_purchase_order_line` with no new input data. An
+"exception" (a shortage, an overload) is a `WHERE` filter on these, not a separate stored table —
+the same "don't store a derived value twice" rule already applied to `available_qty` in P1.2.
+See `docs/DATA_DICTIONARY.md` §8 and `sql/006_planning_outputs.sql`.
 
 ### Naming conventions
 

@@ -24,7 +24,7 @@ import random
 from dataclasses import dataclass
 from datetime import date
 
-from .assumptions import Assumptions, DEFAULT_ASSUMPTIONS
+from ..assumptions import Assumptions, DEFAULT_ASSUMPTIONS
 from .product import ProductRow
 
 # Per-SKU weekly "popularity" range, by family - a generator-level magnitude choice

@@ -10,7 +10,7 @@ legitimate value is never mistakenly flagged.
 from __future__ import annotations
 
 from supply_planning.ingestion.product import validate_rows as validate_products
-from supply_planning.ingestion.quality import IssueKind, QualityReport
+from supply_planning.quality import IssueKind, QualityReport
 from supply_planning.ingestion.validators import (
     check_in_set,
     parse_bool,

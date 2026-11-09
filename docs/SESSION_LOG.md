@@ -301,3 +301,78 @@ Append one entry after each meaningful working session. Keep entries concise and
   every `status`, not just the three `docs/DATA_DICTIONARY.md` discusses, and why `raw` growing on
   every ingestion run while `clean`/`analytics` stay the same size is the idempotency property
   working correctly, not a bug.
+
+### 2026-11-06 — P1.5 Planning KPIs and exceptions
+- **Goal:** implement the projected-inventory recurrence (`docs/BUSINESS_RULES.md` §4, "the core
+  calculation of the project"), weeks of cover, and replenishment suggestions, validated against a
+  hand-calculated 3-week example (mandatory acceptance criterion) and against the real `data/sample/`
+  fixture through the full `raw -> clean -> analytics` pipeline built in P1.3/P1.4.
+- **Implemented:**
+  - Refactor (prerequisite): moved `assumptions.py` and `quality.py` out of `generator/`/
+    `ingestion/` into `src/supply_planning/` directly, so `planning/` (new) and the two existing
+    packages share one copy of each instead of planning reaching into generator's package.
+  - `src/supply_planning/planning/`: `projected_inventory.py` (the `PI_t` recurrence;
+    `MissingDemandDataError` instead of defaulting a missing week to zero), `coverage.py`
+    (`weeks_of_cover`, capped at 13 with `no_forward_demand` on zero cumulative demand, never
+    infinite/`None`), `replenishment.py` (suggests an order qty/date from MOQ and lead time;
+    `MissingLeadTimeError` instead of defaulting a missing family), `run.py` (orchestrator: reads
+    `analytics` via SQLAlchemy, computes per product, writes `analytics.fct_projected_inventory`).
+  - `sql/006_planning_outputs.sql`: `analytics.fct_projected_inventory` (grain
+    `planning_origin_date` × `product_id` × `week_start_date` — the origin is part of the key so
+    two runs on two Mondays coexist) plus two views, `v_capacity_utilisation` and `v_supplier_otif`,
+    computed directly from `fct_capacity`/`fct_purchase_order_line` with no new input data.
+  - **Design decision, not in the original plan but needed once `fct_planning_exception` (the
+    placeholder name in `docs/ARCHITECTURE.md`/`docs/DATA_DICTIONARY.md`) had to become a real
+    table:** implemented as `fct_projected_inventory` holding every week (not only exceptions) plus
+    the two views — an exception is a `WHERE` filter on existing numbers, never a second stored
+    copy. Both docs updated to point at the real shape.
+  - `scripts/run_planning.py`: CLI, default planning origin `2026-05-04` (a Monday inside
+    `data/sample/`'s fixed window chosen so the 13-week horizon and the 8-week trailing-average
+    window both stay inside the fixture's known dates).
+  - `tests/test_planning.py` (12 tests): the mandatory hand-calculated example (`OH=100, SS=30`,
+    3 weeks, verified line by line in the test's own comments, including the `PI == SS` boundary
+    which is *not* a shortage), zero-demand coverage, missing-lead-time, and one infeasible-plan
+    scenario (`docs/.claude/skills/supply-planning`'s "test at least one scenario with no feasible
+    plan").
+  - `README.md`, `docs/ROADMAP.md` (P1.5 → DONE), `docs/ARCHITECTURE.md` §3, `docs/DATA_DICTIONARY.md`
+    (new §8, renumbered §9/§10).
+- **Concepts learned:** why the planning origin has to be part of the output table's primary key
+  (a re-run on a different Monday is a new fact, not a correction of the old one); why `PI == SS`
+  must not count as a shortage (`shortage = max(0, SS - PI)` is exactly 0 there, and
+  `first_shortage_week` uses that, not a separate `<=` check) - got this slightly wrong on a first
+  mental pass and the hand example caught it; why "missing lead time" (`docs/BUSINESS_RULES.md`
+  §4.2) only ever shows up as a *tested* defensive branch, not a real occurrence against this
+  fixture - `Assumptions.lead_time_weeks` is validated complete for all four families at
+  construction, so the real pipeline can never actually trigger it.
+- **Checks run and actual results:**
+  - `python -m pytest` → `100 passed` (12 new planning tests + 88 from P1.3/P1.4, including the
+    refactor's import-path updates).
+  - Applied `sql/006_planning_outputs.sql` to the dev database twice → `CREATE TABLE`/`CREATE VIEW`
+    then `NOTICE: ... already exists, skipping`, 0 errors (idempotency check).
+  - Ran `scripts/run_planning.py` (origin `2026-05-04`) against the already-ingested `data/sample/`
+    data: `1680` rows written (`120` products × `14` rows), confirmed idempotent on a second run
+    (same count, no growth - the table's primary key makes the upsert a true no-op on identical
+    input). Spot-checked one SKU's full 14-row output by hand against the query result: every
+    `PI_t` matched `previous_pi + receipts - demand` exactly.
+  - Queried `analytics.v_capacity_utilisation`/`v_supplier_otif` directly: correctly surfaced the
+    P1.3 `FOOT`/`2026-06-15` overload at `122.3%`, and an overall ~33% OTIF rate consistent with the
+    generator's documented 3-success-out-of-10 status rotation (`data/sample/README.md`).
+  - Of 120 products, 117 showed a projected shortage within the horizon and only 3 had a feasible
+    replenishment suggestion - confirmed this is the already-documented P1.3 limitation showing
+    through (demand and inventory are generated independently, not as a consistent simulation), not
+    a P1.5 defect, by hand-verifying one SKU's numbers were internally arithmetically correct.
+- **Known limitations / decisions:** demand for weeks "in the future" relative to the planning
+  origin is read from `analytics.fct_demand_actual` (real synthetic actuals), not a forecast - a
+  disclosed Phase-1 stand-in, replaced once Phase 2 exists. `safety_stock_units` is sized from the
+  mean of the 8 weeks immediately before the origin - a generator-level interpretation of `ASM-03`'s
+  "weeks of average demand" text, not a new registered assumption (disclosed in `planning/run.py`'s
+  docstring, same pattern as P1.3's seasonality windows). Replenishment suggestions are not written
+  anywhere (no `propose_purchase_order` output table) - P1.5's acceptance criteria only require the
+  logic and its tests, not a persisted suggestion log.
+- **Next task:** P1.6 — build the Power BI report on top of `analytics` (including
+  `fct_projected_inventory` and the two new views), with product/time filtering and KPI definitions
+  visible on the report itself.
+- **Question I can now answer without AI:** why a projected inventory exactly equal to the safety
+  stock is a warning boundary, not yet a shortage, and why 117 out of 120 SKUs showing an
+  "infeasible" replenishment suggestion in this fixture is a known data-generation limitation, not
+  a bug in the recurrence itself.

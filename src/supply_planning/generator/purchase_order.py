@@ -31,7 +31,7 @@ import random
 from dataclasses import dataclass
 from datetime import date, timedelta
 
-from .assumptions import Assumptions, DEFAULT_ASSUMPTIONS
+from ..assumptions import Assumptions, DEFAULT_ASSUMPTIONS
 from .product import ProductRow
 
 _SUPPLIERS_BY_FAMILY: dict[str, tuple[str, ...]] = {
