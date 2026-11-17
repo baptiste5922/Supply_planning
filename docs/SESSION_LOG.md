@@ -376,3 +376,44 @@ Append one entry after each meaningful working session. Keep entries concise and
   stock is a warning boundary, not yet a shortage, and why 117 out of 120 SKUs showing an
   "infeasible" replenishment suggestion in this fixture is a known data-generation limitation, not
   a bug in the recurrence itself.
+
+### 2026-11-17 — P1.6 Power BI report (specification + SQL validation, build still open)
+- **Goal:** finish as much of P1.6 as is verifiable without Power BI Desktop itself, since it
+  requires Windows and no Windows VM is available on this Mac right now; decided with the user to
+  keep the documentation/validation work moving and leave an exact checklist for a Windows PC
+  session later, rather than claiming the report is built when it is not.
+- **Implemented:**
+  - `docs/POWER_BI_REPORT.md` §3: page specification for the three report pages ("Shortage &
+    Coverage", "Capacity", "Supplier Delivery (OTIF)"), each mapped to specific decisions from
+    `docs/BUSINESS_RULES.md` §2, with the shared layout rules (synthetic-data banner, family/SKU
+    slicers, `planning_origin_date` slicer where relevant) and the KPI-card label text copied
+    verbatim from `docs/BUSINESS_RULES.md` §4 rather than reworded.
+  - `docs/POWER_BI_REPORT.md` §4: a 10-step build checklist to run once Power BI Desktop is
+    available, ending in updating §3.4's reconciliation table and only then setting P1.6 to DONE.
+  - `docs/ROADMAP.md`: P1.6 moved `TODO` → `IN_PROGRESS` with the blocker stated explicitly.
+- **Concepts learned:** Decision 6 ("coverage per family aligned with the defined service target")
+  cannot actually be answered quantitatively by this report — `ASM-08` (the 95%/98% service-level
+  target) is a registered assumption in `docs/BUSINESS_RULES.md` that no code anywhere converts
+  into a stored number; grepping `src/` and `sql/` for `service_level`/`ASM-08` returns nothing.
+  The honest move is to disclose that gap on the report page, not to invent a weeks-of-cover
+  threshold that looks like it comes from `ASM-08` but doesn't.
+- **Checks run and actual results:** ran the four §2 validation queries directly against the local
+  dev database (`supply_planning_lab`, port 5433) with `psql`:
+  - Weeks of Cover, origin `2026-05-04`, `weeks_ahead = 0`: 120 rows, average `1.98`, `0` rows with
+    `no_forward_demand` — a new number, not previously stated in any session log.
+  - SKUs with a projected shortage: `117` — matches the P1.5 session log's "117 of 120" exactly.
+  - Capacity utilisation, `FOOT`/`2026-06-15`: `122.3%` — exact match to the P1.5 session log.
+  - Supplier OTIF overall: `71 / 215 = 33.0%` — matches "roughly 33% overall".
+  This confirms the SQL formulas in §2 are correct and stable; it does **not** confirm the DAX
+  measures return the same numbers, since no `.pbix` exists yet to check.
+- **Known limitations / decisions:** the `.pbix` file, the screenshots, and the DAX-vs-SQL
+  reconciliation required by P1.6's acceptance criteria do not exist. Power BI Desktop is
+  Windows-only; this Mac has no Windows VM and the user chose not to pay for Parallels to get one.
+  Work will resume on a Windows PC using `docs/POWER_BI_REPORT.md` §4 as the exact script.
+- **Next task:** execute `docs/POWER_BI_REPORT.md` §4 on a Windows PC: import the model, type the
+  9 DAX measures, build the 3 pages, reconcile each measure against the SQL results already
+  recorded in §3.4, screenshot every page, then set P1.6 to DONE.
+- **Question I can now answer without AI:** why "coverage aligned with a service target" (Decision
+  6) is only partly answerable today — the weeks-of-cover number exists, but the numeric service
+  target it would need to be compared against (`ASM-08`) was registered as an assumption and never
+  actually wired into any calculation or table.

@@ -74,13 +74,19 @@ Status values: `TODO`, `IN_PROGRESS`, `BLOCKED`, `DONE`. Do not mark a task DONE
   - Zero demand and missing lead-time behaviour are tested.
 
 ### P1.6 — Build Power BI report
-- Status: TODO
+- Status: IN_PROGRESS (2026-11-17)
 - Deliverables: report file or documented report specification plus screenshots
 - Acceptance criteria:
   - Product/time filtering works.
   - KPI definitions and units are visible.
   - Important measures reconcile to SQL.
   - Synthetic data is disclosed.
+- Progress: semantic model, DAX measures and page specification are written in
+  `docs/POWER_BI_REPORT.md` §1–§3; the four SQL validation queries were run against the local dev
+  database and match the P1.5 session log exactly. **Blocked on the actual `.pbix` build**: Power
+  BI Desktop requires Windows, not available on this Mac today. `docs/POWER_BI_REPORT.md` §4 is the
+  exact checklist to finish the build and the DAX-vs-SQL reconciliation on a Windows PC. Do not mark
+  DONE until screenshots and that reconciliation exist — a specification is not a report.
 
 ### P1.7 — Publish and explain milestone
 - Status: TODO
