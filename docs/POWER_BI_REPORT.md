@@ -4,14 +4,15 @@
 > **synthetic**. See `docs/BUSINESS_RULES.md` for the business frame and `docs/DATA_DICTIONARY.md`
 > for the field-level source of every table named below.
 
-- **Status:** v1 — P1.6, in progress. §1–§3 (semantic model, DAX measures, page spec) are written
-  and the §2 validation queries have been run against the local dev database. **The `.pbix` itself
-  does not exist yet** — Power BI Desktop requires Windows and this is being built on a Mac with no
-  Windows VM available. §4 is the checklist to execute on a Windows PC to finish the build. The
-  roadmap (`docs/ROADMAP.md`) keeps P1.6 at `IN_PROGRESS`, not `DONE`, until that happens — a
-  specification is not a report, and P1.6's acceptance criteria explicitly require screenshots.
+- **Status:** v1 — P1.6, **blocked**, paused. §1–§3 (semantic model, DAX measures, page spec) are
+  written and the §2 validation queries have been run against the local dev database. **The
+  `.pbix` itself does not exist yet.** Two build paths were tried and both are genuinely blocked,
+  not just inconvenient — see §4.1 below. §4.2 is the checklist to execute once either path is
+  unblocked. The roadmap (`docs/ROADMAP.md`) keeps P1.6 at `BLOCKED`, not `DONE`, until that
+  happens — a specification is not a report, and P1.6's acceptance criteria explicitly require
+  screenshots.
 - **Date:** 2026-11-11 (model and measures), 2026-11-17 (page spec, SQL validation run, build
-  checklist)
+  checklist), 2026-11-22 (Power BI Service path attempted and found blocked)
 - **Scope:** the semantic model, DAX measures and report-page specification for the Phase 1
   Control Tower report. Built in Power BI Desktop (Windows VM), published to Power BI Service.
 
@@ -404,10 +405,43 @@ measures reconcile to SQL" can only be checked once the `.pbix` exists (§4).
 
 ---
 
-## 4. Build checklist — to run on a Windows PC with Power BI Desktop
+## 4. Build path — blocked, two ways tried
 
-Nothing below has been executed yet. This is the exact sequence to follow, in order, so finishing
-P1.6 later does not require re-deriving the model from scratch:
+### 4.1 What was actually tried on 2026-11-22, and why each path is blocked
+
+**Path A — Power BI Desktop.** Requires Windows. This Mac has no Windows VM; the user chose not to
+pay for Parallels. Still blocked, unchanged since the 2026-11-17 entry.
+
+**Path B — Power BI Service in a browser (`app.powerbi.com`), tried today as an alternative.**
+Before attempting sign-in, the plan already flagged one structural limit: the Service is
+cloud-hosted and cannot reach `localhost:5433` directly — no on-premises data gateway is available
+either, since the gateway itself is Windows-only software. The workaround chosen was to export the
+8 `analytics` tables to CSV (`\copy ... TO ... WITH (FORMAT csv, HEADER true)`, row counts matched
+the session log exactly: 120 products, 3599 demand rows, 1680 projected-inventory rows, etc.) and
+import those as static files instead of a live connection.
+
+That workaround was never reached. Signing in at `app.powerbi.com` requires a **work or school**
+Microsoft account (a Microsoft 365 organizational tenant) — a personal email address is rejected at
+the sign-in screen itself, before any workspace or data step. Microsoft does offer to create a new
+trial tenant from a personal email, but that is **creating a new account/organization**, an action
+this assistant does not take on the user's behalf regardless of the task. The user does not have a
+work/school Microsoft account and chose not to create a trial tenant today.
+
+**Conclusion:** the CSV exports are harmless to keep (`analytics`-only, synthetic data, no secrets)
+but the Service path is blocked one step earlier than the data-connectivity question it was meant to
+test — account type, not data access. This is now a known, disclosed limitation, not an assumption:
+do not re-attempt the Service path without first confirming a work/school Microsoft account exists
+or the user has deliberately created a trial tenant themselves.
+
+**Decision:** P1.6 is paused. Work continues on another roadmap task; `docs/ROADMAP.md` marks P1.6
+`BLOCKED` with both blockers stated so the next session does not re-discover either one.
+
+### 4.2 Build checklist — to run once either path above is unblocked
+
+This is the exact sequence to follow, in order, so finishing P1.6 later does not require
+re-deriving the model from scratch. Written for Power BI Desktop (Path A); if Path B becomes
+available instead, §1.1's "Import mode" and §1.5's connection step would need re-deriving for a
+file-based or gateway-based source — not a straight substitution.
 
 1. **Install Power BI Desktop**, then **Get Data → PostgreSQL database** per §1.5
    (`localhost:5433` or the reachable dev-DB host, database `supply_planning_lab`, schema

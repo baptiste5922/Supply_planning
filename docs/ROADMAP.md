@@ -74,7 +74,7 @@ Status values: `TODO`, `IN_PROGRESS`, `BLOCKED`, `DONE`. Do not mark a task DONE
   - Zero demand and missing lead-time behaviour are tested.
 
 ### P1.6 — Build Power BI report
-- Status: IN_PROGRESS (2026-11-17)
+- Status: BLOCKED (2026-11-22)
 - Deliverables: report file or documented report specification plus screenshots
 - Acceptance criteria:
   - Product/time filtering works.
@@ -83,13 +83,16 @@ Status values: `TODO`, `IN_PROGRESS`, `BLOCKED`, `DONE`. Do not mark a task DONE
   - Synthetic data is disclosed.
 - Progress: semantic model, DAX measures and page specification are written in
   `docs/POWER_BI_REPORT.md` §1–§3; the four SQL validation queries were run against the local dev
-  database and match the P1.5 session log exactly. **Blocked on the actual `.pbix` build**: Power
-  BI Desktop requires Windows, not available on this Mac today. `docs/POWER_BI_REPORT.md` §4 is the
-  exact checklist to finish the build and the DAX-vs-SQL reconciliation on a Windows PC. Do not mark
-  DONE until screenshots and that reconciliation exist — a specification is not a report.
+  database and match the P1.5 session log exactly. **Two build paths tried, both blocked** —
+  see `docs/POWER_BI_REPORT.md` §4.1: (a) Power BI Desktop requires Windows, not available on this
+  Mac; (b) Power BI Service (`app.powerbi.com`) requires a work/school Microsoft account, and the
+  user only has a personal email — creating a trial tenant is an account-creation action left to the
+  user, not attempted by the assistant. §4.2 is the exact checklist to finish the build once either
+  blocker is resolved. Do not mark DONE until screenshots and the DAX-vs-SQL reconciliation exist —
+  a specification is not a report. Work is paused here by user decision (2026-11-22).
 
 ### P1.7 — Publish and explain milestone
-- Status: TODO
+- Status: DONE (2026-11-22)
 - Acceptance criteria:
   - README includes setup, architecture, demo and limitations.
   - User can explain the data model, one SQL query and three KPIs.

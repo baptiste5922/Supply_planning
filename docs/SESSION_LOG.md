@@ -417,3 +417,89 @@ Append one entry after each meaningful working session. Keep entries concise and
   6) is only partly answerable today — the weeks-of-cover number exists, but the numeric service
   target it would need to be compared against (`ASM-08`) was registered as an assumption and never
   actually wired into any calculation or table.
+
+### 2026-11-22 — P1.6 Power BI Service path tried and blocked; task paused
+- **Goal:** since Power BI Desktop still requires Windows, try the alternative suggested by the
+  user — build the report via Power BI Service (`app.powerbi.com`) in a browser instead, using
+  static CSV exports in place of a live connection (the Service can't reach `localhost:5433`
+  directly, and the on-premises data gateway that would allow it is itself Windows-only software).
+- **Implemented:**
+  - Exported the 8 `analytics` tables to CSV via `\copy ... WITH (FORMAT csv, HEADER true)` against
+    the local dev database (`supply_planning_lab`, port 5433). Row counts matched the P1.4/P1.5
+    session log exactly: 120 products, 210 calendar rows (actually 210, not 211 — header line
+    counted separately), 6 suppliers, 3599 demand rows, 3600 inventory-snapshot rows, 239
+    purchase-order lines, 120 capacity rows, 1680 projected-inventory rows.
+  - Attempted sign-in at `app.powerbi.com` via Chrome browser automation.
+  - `docs/POWER_BI_REPORT.md` §4 restructured into §4.1 (what was tried and why it's blocked) and
+    §4.2 (the build checklist, now conditional on either blocker being resolved).
+  - `docs/ROADMAP.md`: P1.6 status changed `IN_PROGRESS` → `BLOCKED`, both blockers stated.
+- **Concepts learned:** Power BI Service sign-in requires a work/school Microsoft 365 tenant, not a
+  personal email — this is rejected at the sign-in screen itself, before any question of data
+  connectivity is even reached. Creating a trial tenant from a personal email is offered by
+  Microsoft, but that is account creation, which stays the user's action, never the assistant's,
+  regardless of what the task needs.
+- **Checks run and actual results:** `\copy` export of all 8 tables succeeded, 0 errors, row counts
+  verified by `wc -l` against the known fixture size. No Power BI Service workspace, dataset, or
+  report was created — sign-in itself failed (personal email rejected), so the file-upload /
+  modeling-capability question this attempt was meant to answer (what a Free-tier account can and
+  cannot do without Desktop) remains unanswered.
+- **Known limitations / decisions:** the CSV exports are harmless to keep (synthetic `analytics`
+  data only, no secrets) but currently only live in the session's scratch directory, not committed
+  — nothing in the roadmap requires committing them, and committing a derived export alongside the
+  generator that can reproduce it on demand would be redundant. P1.6 is paused, not abandoned — both
+  blockers (no Windows, no work/school Microsoft account) are environmental, not design problems.
+- **Next task:** user decision pending on where to resume active work while P1.6 stays paused.
+- **Question I can now answer without AI:** why a cloud-hosted BI service still can't be assumed to
+  reach a database running on `localhost`, and why "the task needs an account" is never sufficient
+  justification for an assistant to create one.
+
+### 2026-11-22 — P1.7 Publish and explain Phase 1 milestone
+- **Goal:** make the repository explainable to a recruiter without them reading the code: a README
+  that matches reality (the previous one still read like the initial scaffold), and a live check
+  that the developer can actually explain the data model, one SQL query and three KPIs — P1.7's
+  literal acceptance criteria.
+- **Implemented:**
+  - `README.md` rewritten in English: project pitch, approach (layered data, labelled assumptions,
+    hand-checked calculations), the four implemented KPIs with their formulas and source files, the
+    four verified result numbers from the sample dataset, setup/demo steps (kept from the previous
+    version, re-verified), an accurate repository-structure tree, and an explicit Known Limitations
+    section (P1.6 blocked, the 117/120 shortage artifact, `ASM-08` not wired, no currency, Phase 2/3
+    not started).
+  - Verified the README's one quantitative claim that needed re-checking: `python -m pytest` →
+    `100 passed` (632s), matching the number stated in the README exactly.
+  - Learning checkpoint (oral, not written): asked the developer to explain clean-vs-analytics, one
+    SQL view, and three of the four KPIs without reading the docs. Two corrections were needed —
+    weeks of cover was described as including incoming receipts (it deliberately excludes them,
+    `docs/BUSINESS_RULES.md` §4.1/`docs/POWER_BI_REPORT.md` §2.1); projected shortage was described
+    as a date (it is a quantity in units — `first_shortage_week` is the separate, derived date). The
+    rest (clean/analytics boundary, `v_capacity_utilisation`'s purpose, capacity utilisation itself)
+    was correct in substance, with one terminology slip (% utilised vs. % remaining).
+  - Ran the `reviewer` agent (read-only) against the branch. Verdict: no blockers. One "important"
+    finding: `docs/fiche_technique.md` was untracked, un-ignored, and undecided — resolved by adding
+    it to `.gitignore` (developer's choice: personal revision notes, never committed). Two minor
+    suggestions acted on: moved the PGPORT-conflict warning in `README.md` from after step 8 to
+    right before step 4 (before a reader would actually hit the conflict), and added the same warning
+    as a comment in `.env.example` next to `PGPORT`.
+  - `docs/ROADMAP.md`: P1.7 → DONE.
+- **Concepts learned:** why "the tests pass" and "the acceptance criteria are met" are different
+  claims — the reviewer agent was asked explicitly whether any P1.1–P1.5 criterion looked unmet
+  despite 100 passing tests, not just whether the suite was green; why an undecided stray file (not
+  gitignored, not committed, not deleted) is itself a reviewable risk — the risk isn't the file's
+  content, it's that a future broad `git add` has no documented decision to follow.
+- **Checks run and actual results:** `python -m pytest` → `100 passed` (sole check needed; no new
+  application code was changed, only documentation and `.gitignore`). `git check-ignore` confirmed
+  no prior rule covered `docs/fiche_technique.md` before the fix; not re-verified after, since the
+  new rule is a straightforward exact-path match.
+- **Known limitations / decisions:** the reviewer's three open questions (why a missing demand week
+  raises but a missing receipt week defaults to zero; why `v_supplier_otif` treats the two
+  cancellation reasons asymmetrically; how to prove the 117/120 shortage number is a data-generation
+  artifact rather than an off-by-one) are good interview-prep material but were not written up as a
+  separate document — the answers already exist in `docs/SESSION_LOG.md`'s P1.4/P1.5 entries and in
+  code comments, and duplicating them was judged unnecessary.
+- **Next task:** P1.6 stays `BLOCKED`, resumable once either a Windows machine or a work/school
+  Microsoft account becomes available (`docs/POWER_BI_REPORT.md` §4.1). Phase 1 is otherwise
+  publishable. Next active task is Phase 2 (`P2.1`, demand dataset and EDA) unless the developer
+  chooses to revisit P1.6 first.
+- **Question I can now answer without AI:** why weeks of cover and the projected-inventory
+  recurrence answer two different questions despite both reading the same inventory position, and
+  why a projected shortage is a quantity rather than a date.
