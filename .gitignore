@@ -44,3 +44,6 @@ data/processed/*
 Thumbs.db
 .vscode/
 .idea/
+
+# Personal revision notes — not a roadmap deliverable, never committed.
+docs/fiche_technique.md
